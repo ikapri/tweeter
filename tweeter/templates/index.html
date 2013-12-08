@@ -1,0 +1,10 @@
+<html>
+<head>
+</head>
+<body>
+	{% for k in tweets %}
+		<span>@{{k['screen_name']}}</span><br/>
+		<p>{{k['text']}}</p><br/>
+	{% endfor %}
+</body>
+</html>
