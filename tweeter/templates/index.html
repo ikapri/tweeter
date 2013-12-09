@@ -4,7 +4,7 @@
 <body>
 	{% for k in tweets %}
 		<span>@{{k['screen_name']}}</span><br/>
-		<p>{{k['text']}}</p><br/>
+		<p>{{k['text'] | safe}}</p><br/>
 	{% endfor %}
 </body>
 </html>
