@@ -2,7 +2,7 @@ import requests
 import helper
 import config
 import json
-from celery_tasks import store_tweets
+from celery_tasks import store_tweets,publish
 
 oauth_params = helper.get_oauth_params(config.APP_KEY,config.ACCESS_TOKEN)
 headers = helper.create_auth_header(oauth_params)
@@ -17,6 +17,7 @@ try:
 			print "Fetched..............!"
 			d=json.loads(line)
 			store_tweets.delay(d)
+			publish.delay(d)
 except Exception as e:
 	print e
 			

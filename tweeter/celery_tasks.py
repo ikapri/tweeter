@@ -3,6 +3,7 @@ import json
 from pymongo import MongoClient
 from datetime import datetime
 from mongo_connection import Conn
+import pika
 
 celery_app = Celery('tasks', broker='redis://localhost:6379/0')
 
@@ -18,4 +19,10 @@ def store_tweets(tweet):
     	collection.insert({'id':tweet['id_str'],'text':tweet['text'],'username':tweet['user']['name'],'screen_name':tweet['user']['screen_name'],'profile_image_url':tweet['user']['profile_image_url'],'created_at':epoch})
     except Exception as e:
     	print e
-
+@celery_app.task
+def publish(tweet):
+	connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+	channel = connection.channel()
+	channel.exchange_declare(exchange='tweets',type='fanout')
+	channel.basic_publish(exchange='tweets',routing_key='',body=json.dumps(tweet))
+	connection.close()
