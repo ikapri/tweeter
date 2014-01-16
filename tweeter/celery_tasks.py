@@ -24,5 +24,6 @@ def publish(tweet):
 	connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 	channel = connection.channel()
 	channel.exchange_declare(exchange='tweets',type='fanout')
-	channel.basic_publish(exchange='tweets',routing_key='',body=json.dumps(tweet))
+	data = {'text':tweet['text'],'username':tweet['user']['name'],'screen_name':tweet['user']['screen_name'],'pic_url':tweet['user']['profile_image_url']}
+	channel.basic_publish(exchange='tweets',routing_key='',body=json.dumps(data))
 	connection.close()

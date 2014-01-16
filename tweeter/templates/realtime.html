@@ -5,10 +5,29 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" charset="utf-8">                              
         $(document).ready(function(){ 
+
+            UTF8 = {
+                encode: function(s){
+                    for(var c, i = -1, l = (s = s.split("")).length, o = String.fromCharCode; ++i < l;
+                        s[i] = (c = s[i].charCodeAt(0)) >= 127 ? o(0xc0 | (c >>> 6)) + o(0x80 | (c & 0x3f)) : s[i]
+                        );
+                    return s.join("");
+                },
+                decode: function(s){
+                    for(var a, b, i = -1, l = (s = s.split("")).length, o = String.fromCharCode, c = "charCodeAt"; ++i < l;
+                        ((a = s[i][c](0)) & 0x80) &&
+                        (s[i] = (a & 0xfc) == 0xc0 && ((b = s[i + 1][c](0)) & 0xc0) == 0x80 ?
+                        o(((a & 0x03) << 6) + (b & 0x3f)) : o(128), s[++i] = "")
+                    );
+                    return s.join("");
+                }
+            };
+
             if ("WebSocket" in window) {                                         
                 ws = new WebSocket("ws://" + document.domain + ":8000/pull");                
-                ws.onmessage = function (msg) {                                  
-                    $("#log").append("<p>"+msg.data+"</p>")                      
+                ws.onmessage = function (msg) {  
+                    console.log(UTF8.decode(msg.data));
+                    $("#log").append("<p>"+UTF8.decode(msg.data)+"</p>")                   
                 };                                                               
             } else {                                                             
                 alert("WebSocket not supported");                                
@@ -16,6 +35,7 @@
         });                                                                      
     </script>                                                                    
 </head>                                                                          
-<body>                                                                           
+<body>
+    <div id='log'></div>                                                                           
 </body>                                                                          
 </html>

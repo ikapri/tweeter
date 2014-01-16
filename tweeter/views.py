@@ -12,7 +12,7 @@ def get_tweets(page=None):
 	limit = 10
 	skip = 0
 	if page:
-		skip = 2*(page-1)		
+		skip = limit*(page-1)		
 	tweets = conn.get_tweets(skip,limit)
 	for t in tweets:
 		data.append(t)
